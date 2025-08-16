@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Quote Generator with Server Sync</title>
+    <title>Quote Generator with Server Sync</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary: #3498db;
@@ -25,7 +26,7 @@
         body {
             background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
             min-height: 100vh;
-            padding: 30px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -34,7 +35,7 @@
         
         .container {
             width: 100%;
-            max-width: 900px;
+            max-width: 1000px;
             background: rgba(25, 25, 40, 0.92);
             border-radius: 15px;
             padding: 30px;
@@ -417,29 +418,15 @@
         
         <div class="controls">
             <button id="newQuote">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17 2.1l4 4-4 4"></path>
-                    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
-                    <path d="M21 6v4h-4"></path>
-                    <path d="M3 12v4h4"></path>
-                    <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path>
-                </svg>
+                <i class="fas fa-sync"></i>
                 Show New Quote
             </button>
             <button id="toggleForm" class="secondary">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 5v14"></path>
-                    <path d="M5 12h14"></path>
-                </svg>
+                <i class="fas fa-plus"></i>
                 Add New Quote
             </button>
             <button id="manualSync" class="warning">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                    <path d="M3 3v5h5"></path>
-                    <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path>
-                    <path d="M16 16h5v5"></path>
-                </svg>
+                <i class="fas fa-cloud-upload-alt"></i>
                 Sync Now
             </button>
         </div>
@@ -455,10 +442,7 @@
                 <input type="text" id="newQuoteCategory" placeholder="Enter category (e.g. Inspiration, Life, etc.)">
             </div>
             <button id="addQuoteBtn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 5v14"></path>
-                    <path d="M5 12h14"></path>
-                </svg>
+                <i class="fas fa-plus-circle"></i>
                 Add Quote
             </button>
         </div>
@@ -472,20 +456,26 @@
             </div>
             
             <div class="resolve-options">
-                <button id="resolveAllServer" class="success">Accept All Server Changes</button>
-                <button id="resolveAllLocal" class="secondary">Keep All Local Changes</button>
+                <button id="resolveAllServer" class="success">
+                    <i class="fas fa-server"></i>
+                    Accept All Server Changes
+                </button>
+                <button id="resolveAllLocal" class="secondary">
+                    <i class="fas fa-desktop"></i>
+                    Keep All Local Changes
+                </button>
             </div>
         </div>
         
         <div class="panel">
             <h2>Sync Settings</h2>
             <div class="input-group">
-                <label for="syncInterval">Auto-Sync Interval (seconds)</label>
+                <label for="syncInterval">Auto-Sync Interval</label>
                 <select id="syncInterval">
-                    <option value="5">5 seconds</option>
-                    <option value="10" selected>10 seconds</option>
-                    <option value="30">30 seconds</option>
+                    <option value="10">10 seconds</option>
+                    <option value="30" selected>30 seconds</option>
                     <option value="60">1 minute</option>
+                    <option value="300">5 minutes</option>
                 </select>
             </div>
             
@@ -501,21 +491,33 @@
             <div class="card">
                 <h3>Local Storage</h3>
                 <p>Stores your quotes in the browser. Persists even after closing the browser.</p>
-                <button id="clearLocal">Clear Local Quotes</button>
+                <button id="clearLocal">
+                    <i class="fas fa-trash"></i>
+                    Clear Local Quotes
+                </button>
             </div>
             
             <div class="card">
                 <h3>Server Sync</h3>
                 <p>Synchronizes your quotes with the cloud server. Enables access from multiple devices.</p>
-                <button id="clearServer">Reset Server Data</button>
+                <button id="clearServer">
+                    <i class="fas fa-database"></i>
+                    Reset Server Data
+                </button>
             </div>
             
             <div class="card">
                 <h3>Import/Export</h3>
                 <p>Backup your quotes or transfer them to another device using JSON files.</p>
                 <div style="display: flex; gap: 10px; margin-top: auto;">
-                    <button id="exportBtn" style="flex: 1;">Export</button>
-                    <button id="importBtn" class="secondary" style="flex: 1;">Import</button>
+                    <button id="exportBtn" style="flex: 1;">
+                        <i class="fas fa-file-export"></i>
+                        Export
+                    </button>
+                    <button id="importBtn" class="secondary" style="flex: 1;">
+                        <i class="fas fa-file-import"></i>
+                        Import
+                    </button>
                 </div>
             </div>
         </div>
@@ -525,5 +527,6 @@
         </footer>
     </div>
 
+  <script src="script.js"></script>
 </body>
 </html>

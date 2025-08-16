@@ -107,21 +107,10 @@
         function toggleForm() {
             if (formContainer.style.display === 'none') {
                 formContainer.style.display = 'block';
-                toggleFormButton.innerHTML = `
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M5 12h14"></path>
-                    </svg>
-                    Hide Form
-                `;
+                toggleFormButton.innerHTML = '<i class="fas fa-minus"></i> Hide Form';
             } else {
                 formContainer.style.display = 'none';
-                toggleFormButton.innerHTML = `
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 5v14"></path>
-                        <path d="M5 12h14"></path>
-                    </svg>
-                    Add New Quote
-                `;
+                toggleFormButton.innerHTML = '<i class="fas fa-plus"></i> Add New Quote';
             }
         }
 
@@ -275,27 +264,141 @@
             }, 4000);
         }
 
+        // Simulate fetching quotes from server
+        async function getServerQuotes() {
+            // Simulate network delay
+            await new Promise(resolve => setTimeout(resolve, 800));
+            
+            // In a real app, this would be:
+            // const response = await fetch(SERVER_URL);
+            // return await response.json();
+            
+            // For simulation, we'll return a modified version of local quotes
+            const modifiedQuotes = [...quotes];
+            
+            // Modify 20% of quotes to simulate server changes
+            for (let i = 0; i < modifiedQuotes.length; i++) {
+                if (Math.random() < 0.2) {
+                    modifiedQuotes[i] = {
+                        ...modifiedQuotes[i],
+                        text: modifiedQuotes[i].text + " (server modified)",
+                        version: modifiedQuotes[i].version + 1
+                    };
+                }
+            }
+            
+            // Add some new quotes occasionally
+            if (Math.random() < 0.3) {
+                const newId = Math.max(0, ...modifiedQuotes.map(q => q.id)) + 1;
+                modifiedQuotes.push({
+                    id: newId,
+                    text: "New quote added from server sync",
+                    category: "Server",
+                    version: 1
+                });
+            }
+            
+            return modifiedQuotes;
+        }
+
+        // Simulate posting quotes to server
+        async function postQuotesToServer(quotesToPost) {
+            // Simulate network delay
+            await new Promise(resolve => setTimeout(resolve, 800));
+            
+            // In a real app, this would be:
+            // const response = await fetch(SERVER_URL, {
+            //   method: 'POST',
+            //   headers: { 'Content-Type': 'application/json' },
+            //   body: JSON.stringify(quotesToPost)
+            // });
+            // return await response.json();
+            
+            // For simulation, just return success
+            return { success: true, message: "Quotes updated on server" };
+        }
+
         // Sync with server
         async function syncWithServer() {
             updateSyncStatus('Syncing with server...', 'warning');
+            addHistoryItem('Sync started');
             
             try {
-                // Simulate network delay
-                await new Promise(resolve => setTimeout(resolve, 1500));
+                // Step 1: Fetch server quotes
+                const serverQuotes = await getServerQuotes();
                 
-                // In a real app, we would fetch and merge server data
-                // For simulation, we'll generate some conflicts occasionally
-                if (Math.random() > 0.7) {
-                    generateSimulatedConflicts();
+                // Step 2: Compare with local quotes
+                const localMap = new Map(quotes.map(q => [q.id, q]));
+                const serverMap = new Map(serverQuotes.map(q => [q.id, q]));
+                
+                // Step 3: Merge changes
+                const mergedQuotes = [];
+                const detectedConflicts = [];
+                const changes = {
+                    added: 0,
+                    updated: 0,
+                    conflicts: 0
+                };
+                
+                // Process server quotes
+                for (const serverQuote of serverQuotes) {
+                    const localQuote = localMap.get(serverQuote.id);
+                    
+                    if (localQuote) {
+                        // Quote exists in both places
+                        if (localQuote.version < serverQuote.version) {
+                            // Server has newer version
+                            mergedQuotes.push(serverQuote);
+                            changes.updated++;
+                        } else if (localQuote.version > serverQuote.version) {
+                            // Local has newer version - we'll keep it
+                            mergedQuotes.push(localQuote);
+                            detectedConflicts.push({
+                                id: serverQuote.id,
+                                local: localQuote,
+                                server: serverQuote
+                            });
+                            changes.conflicts++;
+                        } else {
+                            // Versions match - no conflict
+                            mergedQuotes.push(localQuote);
+                        }
+                        localMap.delete(serverQuote.id);
+                    } else {
+                        // New quote from server
+                        mergedQuotes.push(serverQuote);
+                        changes.added++;
+                    }
+                }
+                
+                // Add remaining local quotes not found on server
+                for (const localQuote of localMap.values()) {
+                    mergedQuotes.push(localQuote);
+                }
+                
+                // Step 4: Update local quotes
+                quotes = mergedQuotes;
+                saveQuotesToLocalStorage();
+                
+                // Step 5: Push changes to server
+                await postQuotesToServer(mergedQuotes);
+                
+                // Step 6: Handle conflicts
+                if (detectedConflicts.length > 0) {
+                    conflicts = detectedConflicts;
                     showConflicts();
+                    showMessage(`${detectedConflicts.length} conflicts detected!`, 'warning-msg');
+                    updateSyncStatus('Conflicts detected!', 'error');
                 } else {
                     // Successful sync
                     lastSyncTimestamp = new Date();
                     updateSyncStatus('Sync successful!', 'success');
                     lastSync.textContent = `Last sync: ${lastSyncTimestamp.toLocaleTimeString()}`;
-                    showMessage('Data synchronized successfully with server.', 'success');
-                    addHistoryItem('Sync successful');
+                    showMessage(`Sync successful! Added ${changes.added} quotes, updated ${changes.updated} quotes.`, 'success');
                 }
+                
+                addHistoryItem(`Sync completed: ${changes.added} added, ${changes.updated} updated, ${changes.conflicts} conflicts`);
+                
             } catch (error) {
                 updateSyncStatus('Sync failed', 'error');
                 showMessage(`Sync failed: ${error.message}`, 'error');
@@ -317,47 +420,6 @@
             }
         }
 
-        // Generate simulated conflicts for demonstration
-        function generateSimulatedConflicts() {
-            conflicts = [];
-            
-            if (quotes.length > 0) {
-                // Create a conflict for the first quote
-                const quote = {...quotes[0]};
-                const serverVersion = {
-                    ...quote,
-                    text: quote.text.replace('work', 'life'),
-                    version: quote.version + 1
-                };
-                
-                conflicts.push({
-                    id: quote.id,
-                    local: quote,
-                    server: serverVersion
-                });
-                
-                // Create another conflict
-                if (quotes.length > 1) {
-                    const quote2 = {...quotes[1]};
-                    const serverVersion2 = {
-                        ...quote2,
-                        category: 'Leadership',
-                        version: quote2.version + 1
-                    };
-                    
-                    conflicts.push({
-                        id: quote2.id,
-                        local: quote2,
-                        server: serverVersion2
-                    });
-                }
-            }
-            
-            updateSyncStatus('Conflicts detected!', 'error');
-            showMessage('Conflicts detected between local and server data!', 'warning-msg');
-            addHistoryItem('Sync completed with conflicts');
-        }
-
         // Show conflict resolution UI
         function showConflicts() {
             conflictPanel.style.display = 'block';
@@ -374,18 +436,24 @@
                 conflictEl.innerHTML = `
                     <h4>Conflict in Quote #${conflict.id}</h4>
                     <div class="version local-version">
-                        <strong>Your Version:</strong>
+                        <strong>Your Version (v${conflict.local.version}):</strong>
                         <p>${conflict.local.text}</p>
                         <p><em>— ${conflict.local.category}</em></p>
                     </div>
                     <div class="version server-version">
-                        <strong>Server Version:</strong>
+                        <strong>Server Version (v${conflict.server.version}):</strong>
                         <p>${conflict.server.text}</p>
                         <p><em>— ${conflict.server.category}</em></p>
                     </div>
                     <div class="resolve-options">
-                        <button class="resolve-btn secondary" data-id="${conflict.id}" data-version="local">Keep My Version</button>
-                        <button class="resolve-btn success" data-id="${conflict.id}" data-version="server">Use Server Version</button>
+                        <button class="resolve-btn secondary" data-id="${conflict.id}" data-version="local">
+                            <i class="fas fa-desktop"></i>
+                            Keep My Version
+                        </button>
+                        <button class="resolve-btn success" data-id="${conflict.id}" data-version="server">
+                            <i class="fas fa-server"></i>
+                            Use Server Version
+                        </button>
                     </div>
                 `;
                 
@@ -504,4 +572,4 @@
 
         // Start the application
         document.addEventListener('DOMContentLoaded', init);
-  
+    
