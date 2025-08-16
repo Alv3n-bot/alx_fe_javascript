@@ -5,66 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dynamic Quote Generator</title>
     <style>
-        :root {
-            --primary: #3498db;
-            --secondary: #2c3e50;
-            --accent: #e74c3c;
-            --light: #ecf0f1;
-            --dark: #34495e;
-            --success: #2ecc71;
-            --warning: #f39c12;
-        }
-        
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
-            color: var(--light);
             min-height: 100vh;
-            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            padding: 30px;
+            color: white;
         }
         
         .container {
             width: 100%;
             max-width: 800px;
-            background: rgba(44, 62, 80, 0.9);
+            background: rgba(25, 25, 40, 0.9);
             border-radius: 15px;
             padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             margin-top: 20px;
-            position: relative;
-            overflow: hidden;
         }
         
-        .container::before {
-            content: "";
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(52, 152, 219, 0.1) 0%, transparent 70%);
-            z-index: -1;
+        header {
+            text-align: center;
+            margin-bottom: 30px;
         }
         
         h1 {
-            text-align: center;
             font-size: 2.5rem;
-            margin-bottom: 20px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            color: var(--light);
-            background: linear-gradient(to right, var(--primary), var(--accent));
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            padding: 10px;
+        }
+        
+        .subtitle {
+            color: #aaa;
+            font-size: 1.1rem;
         }
         
         .quote-display {
@@ -79,7 +62,6 @@
             align-items: center;
             position: relative;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
         }
         
         .quote-display::before {
@@ -92,7 +74,7 @@
             font-family: Georgia, serif;
         }
         
-        .quote-text {
+        #quoteText {
             font-size: 1.8rem;
             font-style: italic;
             text-align: center;
@@ -101,17 +83,17 @@
             z-index: 1;
         }
         
-        .quote-category {
+        #quoteCategory {
             font-size: 1.2rem;
             text-align: right;
             width: 100%;
-            color: var(--primary);
+            color: #ff7e5f;
             font-weight: bold;
             margin-top: 15px;
             z-index: 1;
         }
         
-        .quote-category::before {
+        #quoteCategory::before {
             content: "— ";
         }
         
@@ -124,7 +106,7 @@
         }
         
         button {
-            background: var(--primary);
+            background: #4a69bd;
             color: white;
             border: none;
             padding: 12px 25px;
@@ -136,25 +118,15 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         
         button:hover {
-            background: #2980b9;
+            background: #3c5aa6;
             transform: translateY(-3px);
-            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
-        }
-        
-        button:active {
-            transform: translateY(-1px);
         }
         
         button.secondary {
-            background: var(--secondary);
-        }
-        
-        button.secondary:hover {
-            background: #1e2b3a;
+            background: #6a89cc;
         }
         
         .form-container {
@@ -167,7 +139,7 @@
         
         .form-container h2 {
             margin-bottom: 20px;
-            color: var(--primary);
+            color: #ff7e5f;
             text-align: center;
         }
         
@@ -179,7 +151,7 @@
             display: block;
             margin-bottom: 8px;
             font-weight: bold;
-            color: var(--light);
+            color: #ddd;
         }
         
         input, textarea {
@@ -202,12 +174,10 @@
             justify-content: space-between;
             gap: 20px;
             margin-top: 30px;
-            flex-wrap: wrap;
         }
         
         .storage-section {
             flex: 1;
-            min-width: 300px;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
             padding: 20px;
@@ -215,7 +185,7 @@
         }
         
         .storage-section h2 {
-            color: var(--primary);
+            color: #ff7e5f;
             margin-bottom: 15px;
             text-align: center;
             font-size: 1.4rem;
@@ -240,20 +210,20 @@
         
         .success {
             background: rgba(46, 204, 113, 0.2);
-            border: 1px solid var(--success);
-            color: var(--success);
+            border: 1px solid #2ecc71;
+            color: #2ecc71;
         }
         
         .error {
             background: rgba(231, 76, 60, 0.2);
-            border: 1px solid var(--accent);
-            color: var(--accent);
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
         }
         
         .info {
             background: rgba(52, 152, 219, 0.2);
-            border: 1px solid var(--primary);
-            color: var(--primary);
+            border: 1px solid #3498db;
+            color: #3498db;
         }
         
         @keyframes fadeIn {
@@ -279,7 +249,7 @@
         }
         
         .file-input-button {
-            background: var(--secondary);
+            background: #6a89cc;
             color: white;
             padding: 12px;
             text-align: center;
@@ -289,26 +259,11 @@
         }
         
         .file-input-button:hover {
-            background: #1e2b3a;
-        }
-        
-        .footer {
-            margin-top: 30px;
-            text-align: center;
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.6);
+            background: #4a69bd;
         }
         
         @media (max-width: 600px) {
-            .container {
-                padding: 15px;
-            }
-            
-            .quote-text {
-                font-size: 1.4rem;
-            }
-            
-            .controls {
+            .storage-controls {
                 flex-direction: column;
             }
             
@@ -319,34 +274,22 @@
     </style>
 </head>
 <body>
-    <h1>Dynamic Quote Generator</h1>
-    
     <div class="container">
+        <header>
+            <h1>Dynamic Quote Generator</h1>
+            <p class="subtitle">With Web Storage & JSON Import/Export</p>
+        </header>
+        
         <div id="messageContainer"></div>
         
-        <div class="quote-display" id="quoteDisplay">
-            <p class="quote-text" id="quoteText">Click "Show New Quote" to get started!</p>
-            <p class="quote-category" id="quoteCategory"></p>
+        <div class="quote-display">
+            <p id="quoteText">Click "Show New Quote" to get started!</p>
+            <p id="quoteCategory"></p>
         </div>
         
         <div class="controls">
-            <button id="newQuote">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17 2.1l4 4-4 4"></path>
-                    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
-                    <path d="M21 6v4h-4"></path>
-                    <path d="M3 12v4h4"></path>
-                    <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path>
-                </svg>
-                Show New Quote
-            </button>
-            <button id="toggleForm" class="secondary">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 5v14"></path>
-                    <path d="M5 12h14"></path>
-                </svg>
-                Add New Quote
-            </button>
+            <button id="newQuote">Show New Quote</button>
+            <button id="toggleForm" class="secondary">Add New Quote</button>
         </div>
         
         <div class="form-container" id="formContainer" style="display: none;">
@@ -359,13 +302,7 @@
                 <label for="newQuoteCategory">Category</label>
                 <input type="text" id="newQuoteCategory" placeholder="Enter category (e.g. Inspiration, Life, etc.)">
             </div>
-            <button id="addQuoteBtn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 5v14"></path>
-                    <path d="M5 12h14"></path>
-                </svg>
-                Add Quote
-            </button>
+            <button id="addQuoteBtn">Add Quote</button>
         </div>
         
         <div class="storage-controls">
@@ -375,13 +312,7 @@
                     <p>Stores the last viewed quote for your current session.</p>
                     <p>This data will be cleared when you close the browser tab.</p>
                 </div>
-                <button id="clearSession">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 6h18"></path>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    </svg>
-                    Clear Session Quote
-                </button>
+                <button id="clearSession">Clear Session Quote</button>
             </div>
             
             <div class="storage-section">
@@ -390,13 +321,7 @@
                     <p>Stores all quotes permanently in your browser.</p>
                     <p>This data will persist even after closing the browser.</p>
                 </div>
-                <button id="clearLocal">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 6h18"></path>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    </svg>
-                    Clear All Quotes
-                </button>
+                <button id="clearLocal">Clear All Quotes</button>
             </div>
         </div>
         
@@ -404,38 +329,21 @@
             <div class="storage-section">
                 <h2>Export Quotes</h2>
                 <p>Export all your quotes as a JSON file for backup or transfer.</p>
-                <button id="exportBtn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M4 16v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1"></path>
-                        <polyline points="16 12 12 16 8 12"></polyline>
-                        <line x1="12" y1="2" x2="12" y2="16"></line>
-                    </svg>
-                    Export Quotes
-                </button>
+                <button id="exportBtn">Export Quotes</button>
             </div>
             
             <div class="storage-section">
                 <h2>Import Quotes</h2>
                 <p>Import quotes from a JSON file to add to your collection.</p>
                 <div class="file-input-wrapper">
-                    <div class="file-input-button">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M4 16v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1"></path>
-                            <polyline points="8 12 12 16 16 12"></polyline>
-                            <line x1="12" y1="2" x2="12" y2="16"></line>
-                        </svg>
-                        Choose JSON File
-                    </div>
+                    <div class="file-input-button">Choose JSON File</div>
                     <input type="file" id="importFile" accept=".json">
                 </div>
             </div>
         </div>
     </div>
-    
-    <div class="footer">
-        <p>Dynamic Quote Generator with Web Storage & JSON Import/Export</p>
-    </div>
 
-   <script src="script.js"></script>
+    <script src="script.js"> </script>
+     
 </body>
 </html>

@@ -1,5 +1,4 @@
-
-        // Initial quotes database
+   // Initial quotes database
         let quotes = [
             { text: "The only way to do great work is to love what you do.", category: "Inspiration" },
             { text: "Innovation distinguishes between a leader and a follower.", category: "Business" },
@@ -9,7 +8,6 @@
         ];
 
         // DOM elements
-        const quoteDisplay = document.getElementById('quoteDisplay');
         const quoteText = document.getElementById('quoteText');
         const quoteCategory = document.getElementById('quoteCategory');
         const newQuoteButton = document.getElementById('newQuote');
@@ -88,21 +86,10 @@
         function toggleForm() {
             if (formContainer.style.display === 'none') {
                 formContainer.style.display = 'block';
-                toggleFormButton.innerHTML = `
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M5 12h14"></path>
-                    </svg>
-                    Hide Form
-                `;
+                toggleFormButton.textContent = 'Hide Form';
             } else {
                 formContainer.style.display = 'none';
-                toggleFormButton.innerHTML = `
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 5v14"></path>
-                        <path d="M5 12h14"></path>
-                    </svg>
-                    Add New Quote
-                `;
+                toggleFormButton.textContent = 'Add New Quote';
             }
         }
 
@@ -140,13 +127,29 @@
                 return;
             }
             
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(quotes, null, 2));
-            const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", "quotes.json");
-            document.body.appendChild(downloadAnchorNode);
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
+            // Create JSON string
+            const jsonStr = JSON.stringify(quotes, null, 2);
+            
+            // Create a Blob with the JSON data
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            
+            // Create a URL for the blob
+            const url = URL.createObjectURL(blob);
+            
+            // Create a download link
+            const downloadLink = document.createElement('a');
+            downloadLink.href = url;
+            downloadLink.download = 'quotes.json';
+            
+            // Append to the document and trigger download
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            
+            // Clean up
+            setTimeout(() => {
+                document.body.removeChild(downloadLink);
+                URL.revokeObjectURL(url);
+            }, 100);
             
             showMessage('Quotes exported successfully!', 'success');
         }
@@ -162,7 +165,7 @@
                     const importedQuotes = JSON.parse(e.target.result);
                     
                     // Validate the imported data
-                    if (!Array.isArray(importedQuotes) {
+                    if (!Array.isArray(importedQuotes)) {
                         throw new Error('Invalid format: Expected an array of quotes');
                     }
                     
@@ -227,4 +230,4 @@
 
         // Start the application
         document.addEventListener('DOMContentLoaded', init);
- 
+    
