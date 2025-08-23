@@ -11,21 +11,28 @@
     .row { margin: 12px 0; display: flex; gap: 8px; flex-wrap: wrap; }
     input { padding: 8px; }
     button, select { padding: 8px 12px; cursor: pointer; }
+    #syncStatus { margin: 10px 0; font-size: 14px; opacity: 0.9; }
   </style>
 </head>
 <body>
   <h1>Dynamic Quote Generator</h1>
+
+  <!-- Sync controls -->
+  <div class="row">
+    <button id="syncNow">Sync Now</button>
+    <span id="syncStatus">Idle.</span>
+  </div>
 
   <!-- Category filter -->
   <div class="row">
     <label for="categoryFilter"><strong>Filter by category:</strong></label>
     <select id="categoryFilter" onchange="filterQuotes()">
       <option value="all">All Categories</option>
-      <!-- options will be populated dynamically -->
+      <!-- options populated dynamically -->
     </select>
   </div>
 
-  <!-- random quote area -->
+  <!-- random quote -->
   <div id="quoteDisplay">Click “Show New Quote” to begin.</div>
   <button id="newQuote">Show New Quote</button>
 
@@ -36,7 +43,6 @@
   <div class="row">
     <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
     <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
-    <!-- ALX spec uses inline handler -->
     <button onclick="addQuote()">Add Quote</button>
   </div>
 
