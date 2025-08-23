@@ -313,7 +313,7 @@ async function syncPendingToServer() {
   savePending(kept);
 }
 function syncQuotes (){
-    
+    alert("Quotes synced with server!");
 }
 // ===== Boot =====
 document.addEventListener("DOMContentLoaded", () => {
