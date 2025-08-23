@@ -1,23 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dynamic Quote Generator</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; padding: 20px; }
+    #quoteDisplay { margin: 16px 0; font-size: 18px; font-weight: 600; }
+    #quotesList ul { padding-left: 20px; }
+    .row { margin: 12px 0; display: flex; gap: 8px; flex-wrap: wrap; }
+    input { padding: 8px; }
+    button, select { padding: 8px 12px; cursor: pointer; }
+  </style>
 </head>
 <body>
   <h1>Dynamic Quote Generator</h1>
-  
-  <!-- where the random quote will appear -->
-  <div id="quoteDisplay" style="margin: 20px 0; font-size: 18px; font-weight: bold;"></div>
-  
-  <!-- button to show random quote -->
+
+  <!-- Category filter -->
+  <div class="row">
+    <label for="categoryFilter"><strong>Filter by category:</strong></label>
+    <select id="categoryFilter" onchange="filterQuotes()">
+      <option value="all">All Categories</option>
+      <!-- options will be populated dynamically -->
+    </select>
+  </div>
+
+  <!-- random quote area -->
+  <div id="quoteDisplay">Click “Show New Quote” to begin.</div>
   <button id="newQuote">Show New Quote</button>
 
-  <!-- form to add new quote -->
-  <div style="margin-top: 20px;">
+  <!-- filtered list render target -->
+  <div id="quotesList" class="row"></div>
+
+  <!-- add quote form -->
+  <div class="row">
     <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
     <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
+    <!-- ALX spec uses inline handler -->
     <button onclick="addQuote()">Add Quote</button>
   </div>
 
